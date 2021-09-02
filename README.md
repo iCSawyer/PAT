@@ -1,4 +1,5 @@
 # PAT
-> 解题路径:《算法笔记》胡凡 & 配套习题册
+> Reference
+> 《算法笔记》胡凡等
+> https://github.com/liuchuo/PAT & liuchuo's Blog
 
-PAT（甲级）刷题记录，希望9月能有好成绩!
