@@ -1,0 +1,43 @@
+// 20min AC
+#include<bits/stdc++.h>
+using namespace std;
+
+const int N = 1010;
+int n, r, k; //区域数（1-500），区域关联的个数（>=0），动物品种数（1-n）
+int m; //样例数
+vector<int> Adj[N];
+int region[N];
+set<int> spe;
+
+int main() {
+    int t1, t2, flag = 1;
+    scanf("%d%d%d", &n, &r, &k);
+    for(int i = 0; i < r; i ++) {
+        scanf("%d%d", &t1, &t2);
+        Adj[t1].push_back(t2);
+    }
+    scanf("%d", &m);
+    while(m --) {
+        spe.clear(); flag = 1;
+        for(int i = 1; i <= n; i ++) {
+            scanf("%d", &t1);
+            spe.insert(t1);
+            region[i] = t1;
+        }
+        if(spe.size() != k) {
+            printf("Error: Too %s species.\n", spe.size() > k ? "many" : "few");
+            continue;
+        }
+        for(int i = 1; i <= n && flag == 1; i ++) {
+            for(int j = 0; j < Adj[i].size(); j ++) {
+                if(region[i] == region[Adj[i][j]]) {
+                    flag = 0;
+                    break;
+                }
+            }
+        }
+        if(flag) cout << "Yes\n";
+        else cout << "No\n";
+    }
+    return 0;
+}

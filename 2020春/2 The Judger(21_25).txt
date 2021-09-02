@@ -1,0 +1,60 @@
+// 38min 21/25
+#include<bits/stdc++.h>
+using namespace std;
+
+const int N = 20;
+unordered_set<int> exist, differ;
+vector<int> winner;
+int in[20][1010];
+bool isOut[20];
+
+int difference(int a, int b) {
+    if(a < b) swap(a, b);
+    return a - b;
+}
+
+int main() {
+    int a, b, n, m, t;
+    cin >> a >> b;
+    exist.insert(a); exist.insert(b);
+    differ.insert(difference(a, b));
+
+    cin >> n >> m;
+    for(int i = 1; i <= n; i ++) {
+        for(int j = 1; j <= m; j ++) {
+            scanf("%d", &in[i][j]);
+        }
+    }
+
+    for(int j = 1; j <= m; j ++) {
+        for(int i = 1; i <= n; i ++) { // 不能是出局的人
+            if(isOut[i] == 1) continue;
+            t = in[i][j];
+            if(differ.find(t) == differ.end() || exist.find(t) != exist.end()) {
+                isOut[i] = 1;
+                printf("Round #%d: %d is out.\n", j, i);
+            }
+            else {
+                for(auto i = exist.begin(); i != exist.end(); i ++) {
+                    differ.insert(difference(t, *i)); // 加入和原来的人的差值
+                }
+                exist.insert(t);
+            }
+        }
+    }
+
+    for(int i = 1; i <= n; i ++) {
+        if(isOut[i] == 0) winner.push_back(i);
+    }
+
+    if(winner.empty()) cout << "No winner.\n";
+    else {
+        cout << "Winner(s): ";
+        for(int i = 0; i < winner.size(); i ++) {
+            printf("%d%s", winner[i], i == winner.size() - 1 ? "\n" : " ");
+        }
+
+    }
+
+    return 0;
+}
