@@ -1,0 +1,28 @@
+// 1h 11/20
+#include<bits/stdc++.h>
+
+#define LL long long
+using namespace std;
+
+LL n, m;
+set<LL> s;
+unordered_map<LL, LL> ntos, ston;
+
+
+int main() {
+    bool ff = 0;
+    cin >> n >> m;
+    LL weishu = (to_string(m).size() + n) / 2 + 1;
+    for(LL i = 0; i < pow(10, weishu); i ++) {
+        LL b = i, a = (LL)(i * i / pow(10, n)), flag = 1;
+        if(a > m) break;
+        // printf("b:%lld a:%lld\n", b, a);
+        for(LL j = 0; j < n; j ++) {
+            if( a == (LL)(b*b/pow(10,n)) ) { b++; a++; }
+            else { flag = 0; break;}
+        }
+        if(flag) { ff = 1;cout << a - n << " " << b - n << endl;}
+    }
+    if(!ff) std::cout << "No Solution.\n";
+    return 0;
+}
