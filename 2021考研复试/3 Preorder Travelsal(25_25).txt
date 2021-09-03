@@ -1,0 +1,45 @@
+// 20min AC
+#include<bits/stdc++.h>
+using namespace std;
+
+const int N = 100010;
+int pos[N], in[N];
+int n, ans;
+
+struct node {
+    int data;
+    node* lchild;
+    node* rchild;
+};
+
+node* createTree(int posL, int posR, int inL, int inR) {
+    if(posL > posR) return NULL;
+    node* root = new node;
+    root->data = pos[posR];
+    int k, num;
+    for(k = inL; k <= inR; k ++)
+        if(in[k] == root->data) break;
+    num = k - inL;
+    //cout << posL  << " " << posR << " " <<  inL << " " << inR <<endl;
+    root->lchild = createTree(posL, posL + num - 1, inL, k - 1);
+    root->rchild = createTree(posL + num, posR - 1, k + 1, inR);
+    return root;
+}
+
+void fun(node* root) {
+    if(root == NULL) return;
+    ans = root->data;
+    fun(root->lchild);
+    fun(root->rchild);
+}
+
+int main() {
+    cin >> n;
+    for(int i = 0; i < n; i ++) cin >> pos[i];
+    for(int i = 0; i < n; i ++) cin >> in[i];
+    node* root = NULL;
+    root = createTree(0, n - 1, 0, n - 1);
+    fun(root);
+    cout << ans;
+    return 0;
+}
