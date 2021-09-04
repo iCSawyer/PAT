@@ -1,0 +1,35 @@
+// 1. 12min AC
+// 2. 30-12=18min 23/25 最后一个运行点超时
+#include<bits/stdc++.h>
+using namespace std;
+
+bool check(string str, string seq) {
+    if(seq.size() > str.size()) return false;
+    int j = 0;
+    for(int i = 0; i < str.size(); i ++) {
+        if(str[i] == seq[j]) j ++;
+    }
+    if(j == seq.size())
+        return true;
+    return false;
+}
+
+int main() {
+    string s, sub_str, sub_seq, ans;
+    cin >> s >> sub_seq;
+
+    int s_l = s.size();
+    int sub_seq_l = sub_seq.length();
+    // 外循环：子串的长度，从sub_seq_l到s_l
+    for(int i = sub_seq_l; i <= s_l; i ++) {
+        // i是当前子串的长度
+        for(int j = 0; j < s_l - i + 1; j ++) {
+            if(check(s.substr(j, i), sub_seq)) {
+                cout << s.substr(j, i) << endl;
+                return 0;
+            }
+        }
+    }
+    // cout << check("fdsgsdfpgfsdgagdsfgt", "pat");
+    return 0;
+}

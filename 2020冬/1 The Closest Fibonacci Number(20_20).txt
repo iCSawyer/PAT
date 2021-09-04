@@ -1,0 +1,32 @@
+// 记忆化搜索
+// 12min AC
+#include<bits/stdc++.h>
+using namespace std;
+
+const int N = 1e8 + 10;
+long f[N], n;
+
+long fib(long i) {
+    if(i == 0) return 0;
+    if(i == 1) return 1;
+    if(f[i] != 0) return f[i];
+    f[i] = fib(i - 1) + fib(i - 2);
+    return f[i];
+}
+
+int main() {
+    // 第30项：832040
+    // 第40项：102334155 > 1e8
+    cin >> n;
+    fib(40);
+
+    int min = 1e9, minf = 0;
+    for(int i = 0; i <= 40; i ++) {
+        if(abs(n - f[i]) < min) {
+            min = abs(n - f[i]);
+            minf = f[i];
+        }
+    }
+    cout << minf << endl;
+    return 0;
+}

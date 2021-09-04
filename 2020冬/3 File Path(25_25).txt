@@ -1,0 +1,69 @@
+// 1. 12min AC
+// 2. 30-12=18min 23/25 最后一个运行点超时
+// 3. 73-30=43min AC
+#include<bits/stdc++.h>
+
+using namespace std;
+
+struct node {
+    int blank;
+    int id;
+
+    node(int _b, int _i) : blank(_b), id(_i) {}
+};
+
+vector<node> v; //位置到空格数和编号
+map<int, int> m; //四位编号到位置
+vector<int> path;
+
+int blankNum(string s) {
+    int num = 0;
+    for (int i = 0; i < s.size(); i++) {
+        if (s[i] != ' ') break; // !!!!!!!!!!
+        else num++;
+    }
+    return num;
+}
+
+int main() {
+    int n, file, pos, cur_blank;
+    string t;
+    scanf("%d", &n); // !!!!
+    getchar(); // !!!!
+    for (int i = 0; i < n; i++) {
+        getline(cin, t);
+        v.push_back(node(blankNum(t), stoi(t)));
+        m.insert(pair<int, int>(stoi(t), i));
+    }
+
+    // 样例
+    cin >> n;
+    while (n--) {
+        path.clear();
+        cin >> file;
+        // 特判：是否存在
+        if (m.find(file) == m.end()) {
+            printf("Error: %04d is not found.\n", file);
+            continue;
+        }
+        // 初始化
+        pos = m[file];
+        cur_blank = v[pos].blank;
+        path.push_back(v[pos].id);
+        // 循环
+        while (pos != 0) {
+            pos--;
+            if (pos != 0 && v[pos].blank == cur_blank - 1) {
+                path.push_back(v[pos].id);
+                cur_blank = v[pos].blank;
+            }
+        }
+        // 如果不是0
+        if (file != 0) path.push_back(0);
+        // 输出
+        for (int i = path.size() - 1; i >= 0; i--) {
+            printf("%04d%s", path[i], i == 0 ? "\n" : "->");
+        }
+    }
+    return 0;
+}

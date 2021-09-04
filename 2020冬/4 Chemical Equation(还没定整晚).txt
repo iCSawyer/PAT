@@ -1,0 +1,104 @@
+// 1. 12min AC
+// 2. 30-12=18min 23/25 最后一个运行点超时
+// 3. 73-30=43min AC
+#include<bits/stdc++.h>
+
+using namespace std;
+
+const int N = 200;
+int n, m;
+int rea[N]; //编号为N的剩余反应物的数量
+vector<int> in; //顺序，合成物，是否合成了
+vector<string> eq[N]; //合成i所需的化学式，每个化学式是一个string
+vector<string> path;
+
+void change(string s) {
+    string t;
+    for (auto i = s.begin(); i != s.end(); i++) {
+        if (*i >= '0' && *i <= '9')
+            t += *i;
+    }
+    int num = stoi(s.substr(s.size() - 2, 2));
+    t = t.substr(0, t.size() - 2);
+    // cout << num << " " << t;
+    eq[num].push_back(t);
+    sort(eq[num].begin(), eq[num].end());
+}
+
+bool check(int chemical, int e) { //chemial的第e个化学式
+    string s = eq[chemical][e];
+    for(int i = 0; i < s.size(); i += 2) {
+        string cur = s.substr(i, 2);
+        int t = stoi(cur);
+        if(rea[t] == 0)
+            return false;
+    }
+    return true;
+}
+
+void printPath() {
+    for(auto s: path)
+        cout << s << " ";
+    cout << endl;
+}
+
+void Set(int chemical, int e, bool b) { //chemial的第e个化学式
+    string s = eq[chemical][e];
+    for(int i = 0; i < s.size(); i += 2) {
+        string cur = s.substr(i, 2);
+        int t = stoi(cur);
+        rea[t] = b;
+    }
+}
+
+void DFS(int proIndex) { //需要合成的产物序号
+    // printPath();
+    if(proIndex >= in.size()) {
+        for(auto s: path)
+            cout << s << endl;
+        return;
+    }
+    int chemical = in[proIndex];
+
+    if(rea[chemical] == 1) {
+        rea[chemical] = 0;
+        if(chemical < 10) path.push_back("0"+ to_string(chemical)+"0"+ to_string(chemical));
+        else path.push_back(to_string(chemical) + to_string(chemical));
+        DFS(proIndex + 1);
+        path.pop_back();
+        rea[chemical] = 1;
+    }
+    for(int i = 0; i < eq[chemical].size(); i ++) {
+        if(check(chemical, i)) {
+            Set(chemical, i, false);
+            path.push_back(eq[chemical][i]);
+            DFS(proIndex + 1);
+            Set(chemical, i, true);
+            path.pop_back();
+            break;
+        }
+    }
+}
+
+int main() {
+    int t;
+    scanf("%d", &n);
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &t);
+        rea[t] = 1;
+    }
+    scanf("%d", &n);
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &t);
+        in.push_back(t);
+    }
+    scanf("%d", &n);
+    getchar();
+    for (int i = 0; i < n; i++) {
+        string t;
+        getline(cin, t);
+        change(t);
+    }
+    DFS(0);
+    return 0;
+}
