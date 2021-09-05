@@ -1,0 +1,74 @@
+// 15/25
+// line 31和37的逻辑是错的（没有修正），短通话就是5分钟，集合才需要判断k个数
+#include<bits/stdc++.h>
+using namespace std;
+
+const int N = 1010;
+int G[N][N];
+int k, n, m; // 短电话的阈值、用户数（标记为1-N）、电话数量
+set<int> receiver, sus;
+map<int, int> mm; //电话号码->集合号
+vector<int> ans[N];
+int num = 0;
+
+bool cmp(vector<int> a, vector<int> b) {
+    if(a.size() == 0 || b.size() == 0) return a.size() > b.size();
+    return a < b;
+}
+
+int main() {
+    int t1, t2, t3;
+    cin >> k >> n >> m;
+    for(int i = 0; i < m; i ++) {
+        scanf("%d%d%d", &t1, &t2, &t3);
+        G[t1][t2] = t3;
+    }
+    for(int i = 1; i <= n; i ++) { // 查看i是否为嫌疑人
+        receiver.clear();
+        int back = 0;
+        for(int j = 1; j <= n; j ++) {
+            // 如果通话时间小于等于k，且receiver找不到j
+            if(G[i][j] != 0 && G[i][j] <= k) {
+                receiver.insert(j);
+                if(G[j][i] != 0)
+                    back ++;
+            }
+        }
+        if(receiver.size() > 0 && 0.2 * receiver.size() >= back) {
+            sus.insert(i);
+        }
+    }
+    // 实现并查集的效果
+    for(auto i = sus.begin(); i != sus.end(); i ++) {
+        if(i == sus.begin()) {
+            ans[num].push_back(*i);
+            mm.insert(pair<int, int>(*i, num));
+            num ++; //指向下一个新集合
+            continue;
+        }
+        int flag = 0;
+        for(int j = 1; j <= n; j ++) {
+            if(sus.find(j) != sus.end() && G[*i][j] != 0 && G[j][*i] != 0 && mm.find(j) != mm.end()) {
+                ans[mm[j]].push_back(*i);
+                flag = 1;
+                break;
+            }
+        }
+        if(flag == 0) {
+            ans[num].push_back(*i);
+            mm.insert(pair<int, int>(*i, num));
+            num ++; //指向下一个新集合
+        }
+    }
+
+    if(sus.size() == 0) {
+        cout << "None\n";
+        return 0;
+    }
+    sort(ans, ans + N, cmp);
+    for(int i = 0; i < num; i ++) {
+        for(auto j = 0; j < ans[i].size(); j ++)
+            printf("%d%s", ans[i][j] , j == ans[i].size() - 1 ? "\n" : " ");
+    }
+    return 0;
+}
