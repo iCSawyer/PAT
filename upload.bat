@@ -1,3 +1,6 @@
+@echo off
+set /p info=
+
 git add .
-git commit -m "one more AC"
+git commit -m "%info%"
 git push

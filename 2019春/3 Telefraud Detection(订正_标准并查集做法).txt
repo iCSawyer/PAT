@@ -1,0 +1,85 @@
+// 通过样例
+#include<bits/stdc++.h>
+using namespace std;
+
+const int N = 1010;
+int G[N][N], father[N], isRoot[N]; //图和并查集
+int k, n, m; // 短电话的阈值、用户数（标记为1-N）、电话数量
+set<int>receiver, sus; //临时变量、嫌疑人集合
+vector<int> ans[N];
+
+int findFather(int x) {
+    int a = x;
+    while(x != father[x]) x = father[x];
+    while(a != father[a]) {
+        father[a] = x;
+        a = father[a];
+    }
+    return x;
+}
+
+void Union(int a, int b) {
+    int fa = findFather(a);
+    int fb = findFather(b);
+    if(fa != fb) {
+        if(fa > fb) father[fa] = fb;
+        else father[fb] = fa;
+    }
+}
+
+bool cmp(vector<int> &a, vector<int> &b) {
+    if(a.size() == 0 || b.size() == 0) return a.size() > b.size();
+    return a < b;
+}
+
+int main() {
+    int t1, t2, t3;
+    cin >> k >> n >> m;
+    for(int i = 0; i < m; i ++) {
+        scanf("%d%d%d", &t1, &t2, &t3);
+        G[t1][t2] = t3;
+    }
+    for(int i = 1; i <= n; i ++) { // 查看i是否为嫌疑人
+        receiver.clear();
+        int back = 0;
+        for(int j = 1; j <= n; j ++) {
+            // 如果通话时间小于等于k，且receiver找不到j
+            if(G[i][j] != 0 && G[i][j] <= 5) {
+                receiver.insert(j);
+                if(G[j][i] != 0)
+                    back ++;
+            }
+        }
+        if(receiver.size() >= k && 0.2 * receiver.size() >= back) {
+            sus.insert(i);
+        }
+    }
+    // 现在sus里都是嫌疑人
+    // 1.初始化
+    for(auto i = sus.begin(); i != sus.end(); i ++)
+        father[*i] = *i;
+    // 2.合并
+    for(auto i = sus.begin(); i != sus.end(); i ++) {
+        for(auto j = sus.begin(); j != sus.end(); j++) {
+            if(G[*i][*j] != 0 && G[*j][*i] != 0)
+                Union(*i, *j);
+        }
+    }
+    // 3. 输出
+    // 首先找根结点
+    int rootN = 0;
+    for(int i = 1; i <= n; i ++) {
+        isRoot[findFather(i)] = 1;
+    }
+    for(int i = 1; i <= n; i ++) {
+        ans[findFather(i)].push_back(i);
+    }
+    sort(ans, ans + N, cmp);
+    for(int i = 1; i <= n; i ++) {
+        // if(isRoot[i]) {
+            for(int j = 0; j < ans[i].size(); j ++)
+                printf("%d%s", ans[i][j], j == ans[i].size() - 1 ? "\n" : " ");
+        // }
+    }
+    return 0;
+}
