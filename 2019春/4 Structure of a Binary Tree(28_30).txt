@@ -1,0 +1,104 @@
+// 30min 28/30
+#include<bits/stdc++.h>
+using namespace std;
+
+const int N = 110;
+int pos[N], in[N];
+int n, flag = 1;
+struct node {
+    int key, lr, level;
+    node* lchild;
+    node* rchild;
+    node* parent;
+};
+map<int, node*> m;
+
+//lr:0是根，1是左孩子，-1是右孩子
+node* createTree(int posL, int posR, int inL, int inR, node* parent, int lr, int level) {
+    if(posL > posR) return NULL;
+    node* root = new node;
+    root->key = pos[posR];
+    int k, num;
+    for(k = inL; k <= inR; k ++) {
+        if(in[k] == pos[posR]) break;
+    }
+    num = k - inL;
+    root->lchild = createTree(posL, posL + num - 1, inL, k - 1, root, 1, level + 1);
+    root->rchild = createTree(posL + num, posR - 1, k + 1, inR, root, -1, level + 1);
+    root->parent = parent;
+    root->lr = lr;
+    root->level = level;
+    if((root->lchild==NULL&&root->rchild!=NULL) || (root->lchild!=NULL&&root->rchild==NULL) )
+        flag = 0;
+    m.insert(pair<int, node*>(root->key, root));
+    return root;
+}
+
+void fun(node* root) {
+    if(root == NULL) return;
+    fun(root->lchild);
+    cout << root->key << " ";
+    fun(root->rchild);
+
+}
+
+string select(string s, int k) { // 分离第k个单词
+    int last = -1, cur = 0, num = 0;
+    for(int i = 0; i < s.size(); i ++) {
+        if(s[i] == ' ') {
+            num++; cur = i;
+            if(num == k) break;
+            else last = i;
+        }
+    }
+    last++; cur--;
+    return s.substr(last, cur - last + 1);
+}
+
+int main() {
+    node* root;
+    cin >> n;
+    for(int i = 0; i < n; i ++) scanf("%d", &pos[i]);
+    for(int i = 0; i < n; i ++) scanf("%d", &in[i]);
+    root = createTree(0, n - 1, 0, n - 1, NULL, 0, 1);
+    cin >> n; getchar();
+    while(n --) {
+        string t;
+        getline(cin, t);
+        if(select(t, 4) == "root") {
+            int num = stoi(select(t, 1));
+            if(m[num]->parent == NULL) printf("Yes\n");
+            else printf("No\n");
+        }
+        else if(select(t, 5) == "siblings") {
+            int a = stoi(select(t, 1)), b = stoi(select(t, 3));
+            if(m[a]->parent == m[b]->parent) printf("Yes\n");
+            else printf("No\n");
+        }
+        else if(select(t, 4) == "parent") {
+            int a = stoi(select(t, 1)), b = stoi(select(t, 6));
+            if(m[b]->parent->key == a) printf("Yes\n");
+            else printf("No\n");
+        }
+        else if(select(t, 4) == "left") {
+            int a = stoi(select(t, 1)), b = stoi(select(t, 7));
+            if(m[a]->parent->key == b && m[a]->lr == 1) printf("Yes\n");
+            else printf("No\n");
+        }
+        else if(select(t, 4) == "right") {
+            int a = stoi(select(t, 1)), b = stoi(select(t, 7));
+            if(m[a]->parent->key == b && m[a]->lr == -1) printf("Yes\n");
+            else printf("No\n");
+        }
+        else if(select(t, 5) == "on") {
+            int a = stoi(select(t, 1)), b = stoi(select(t, 3));
+            if(m[a]->level == m[b]->level) printf("Yes\n");
+            else printf("No\n");
+        }
+        else {
+            if(flag) printf("Yes\n");
+            else printf("No\n");
+        }
+    }
+    return 0;
+}

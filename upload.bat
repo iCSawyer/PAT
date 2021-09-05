@@ -1,3 +1,4 @@
+@echo off
 set /p info=
 git add .
 git commit -m "%info%"
