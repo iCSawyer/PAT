@@ -1,0 +1,34 @@
+// 20min AC
+// alumn的begin是最大还是最小？
+#include<bits/stdc++.h>
+using namespace std;
+
+set<string> alumn;
+string oldest = "999999999999999999";
+string o = oldest;
+int num;
+
+int main() {
+    int n, cnt = 0;
+    string t;
+    cin >> n;
+    for(int i = 0; i < n; i ++) {
+        cin >> t;
+        alumn.insert(t);
+    }
+    cin >> n;
+    for(int i = 0; i < n; i ++) {
+        cin >> t;
+        if(t.substr(6, 8) < o.substr(6, 8))
+            o = t;
+
+        if(alumn.find(t) != alumn.end()) {
+            cnt ++;
+            if(t.substr(6, 8) < oldest.substr(6, 8))
+                oldest = t;
+        }
+    }
+    if(cnt > 0) printf("%d\n%s", cnt, oldest.c_str());
+    else printf("%d\n%s", cnt, o.c_str());
+    return 0;
+}
