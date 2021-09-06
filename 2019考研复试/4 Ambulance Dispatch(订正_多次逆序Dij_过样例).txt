@@ -1,0 +1,127 @@
+// 最短路径问题变体
+// 1.从起点到终点Dij还是从终点到起点Dij需要决定，因为它不能决定终点
+
+#include<bits/stdc++.h>
+using namespace std;
+
+const int INF = 1e9;
+const int N = 10010; //图里面1-N是pickup，N+1开始是center
+int pickNum, centerNum, pickup, n; //n是总数，1-n
+int ambulance[20]; //i号（1-N）中心的救护车数量
+int G[N][N], d[N], vis[N];
+vector<int> pre[N], path, temp;
+int maxAmbulance, minStreet, minTime;
+int useCenter = -1;
+
+
+void DFS(int st, int cur) {
+    // cout << cur << endl;
+    if(st == cur) {
+        temp.push_back(cur);
+        int streetNum = temp.size();
+        int ambulanceNum = ambulance[cur - pickNum];
+        int time = d[pickup];
+        // cout << time << " ?";
+        if(time < minTime) {
+            minTime = time,  maxAmbulance = ambulanceNum, minStreet = streetNum;
+            path = temp; useCenter = cur - pickNum;
+        }
+        else if(time == minTime && ambulanceNum > maxAmbulance) {
+            maxAmbulance = ambulanceNum, minStreet = streetNum;
+            path = temp; useCenter = cur - pickNum;
+        } else if(time == minTime && ambulanceNum == maxAmbulance && streetNum < minStreet) {
+            minStreet = streetNum;
+            path = temp; useCenter = cur - pickNum;
+        }
+        /*for(auto item : temp)
+            cout << item << " ";
+        cout << endl;*/
+        temp.pop_back();
+        return;
+    }
+    temp.push_back(cur);
+    for(int i = 0; i < pre[cur].size(); i ++)
+        DFS(st, pre[cur][i]);
+    temp.pop_back();
+}
+
+void Dij(int s) {
+    // cout << "===" << s << endl;
+    fill(d, d + N, INF);
+    fill(vis, vis + N, false);
+    d[s] = 0;
+    for(int i = 1; i <= n; i ++) {
+        int u = -1, MIN = INF;
+        for(int j = 1; j <= n; j ++) {
+            if(!vis[j] && d[j] < MIN) {
+                u = j, MIN = d[j];
+            }
+        }
+        if(u == -1) return;
+        vis[u] = true;
+        for(int v = 1; v <= n; v ++) {
+            if(!vis[v] && G[u][v] != INF) {
+                if(d[v] > d[u] + G[u][v]) {
+                    d[v] = d[u] + G[u][v];
+                    pre[v].clear();
+                    pre[v].push_back(u);
+                } else if (d[v] == d[u] + G[u][v]) {
+                    pre[v].push_back(u);
+                }
+            }
+        }
+    }
+//    for(int i = 1; i <= n; i ++)
+//        cout << d[i] << " ";
+//    cout << endl;
+}
+
+int main() {
+    int t, di;
+    string s1, s2;
+    fill(G[0], G[0] + N * N, INF);
+    cin >> pickNum >> centerNum;
+    n = pickNum + centerNum;
+    for(int i = 1; i <= centerNum; i ++) scanf("%d", &ambulance[i]);
+    scanf("%d", &t);
+    for(int i = 0; i < t; i ++) {
+        int a, b;
+        cin >> s1 >> s2 >> di;
+        if(s1.size() > 1) a = stoi(s1.substr(2, 1)) + pickNum;
+        else a = stoi(s1);
+        if(s2.size() > 1) b = stoi(s2.substr(2, 1)) + pickNum;
+        else b = stoi(s2);
+        G[a][b] = G[b][a] = di;
+        // cout << a << " " << b << endl;
+    }
+    scanf("%d", &t);
+    while(t --) {
+        maxAmbulance = -1, minStreet = 1e9, useCenter = -1, minTime = 1e9;
+        path.clear();
+        // pre[v]初始化？
+        scanf("%d", &pickup);
+
+        // 找救护车
+        for(int i = pickNum + 1; i <= n; i ++) {
+            if(ambulance[i - pickNum] >= 1) {
+                temp.clear();
+                Dij(i);
+                DFS(i, pickup);
+                //cout << "--------------\n";
+            }
+        }
+        if(useCenter != -1) {
+            for(int i = path.size() - 1; i >= 0; i --) {
+                if (path[i] > pickNum) printf("A-%d", path[i] - pickNum);
+                else printf("%d", path[i]);
+                printf("%s", i == 0 ? "\n": " ");
+            }
+            cout << minTime << endl;
+            ambulance[useCenter] --;
+        }
+        else {
+            cout << "All busy\n";
+        }
+    }
+    return 0;
+}

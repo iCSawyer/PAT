@@ -1,0 +1,46 @@
+// 27min 22/25
+#include<bits/stdc++.h>
+using namespace std;
+
+const int N = 100010;
+struct node {
+    int address;
+    int data;
+    int next;
+}Node[N];
+int head = -1, n, k;
+vector<int> l1, l2;
+
+int main(){
+    int a, d, ne;
+    scanf("%d%d%d", &head, &n, &k);
+    for(int i = 0; i < n; i ++) {
+        scanf("%d%d%d", &a, &d, &ne);
+        Node[a] = {a, d, ne};
+    }
+    //原链表放入l1
+    int add = head;
+    while(add != -1) {
+        l1.push_back(add);
+        add = Node[add].next;
+    }
+
+    // 交替把新结果放入l2（地址）
+    int k1 = k - 1, n1 = n - 1;
+    while(k1 >= 0 && n1 > k - 1) { // n1要大于原来的k1，其k1要大于等于0
+        l2.push_back(l1[k1 --]);
+        l2.push_back(l1[n1 --]);
+    }
+    while(k1 >= 0) { l2.push_back(l1[k1 --]); }
+    while(n1 > k - 1) { l2.push_back(l1[n1 --]); }
+
+    // 输出
+    for(int i = 0; i < n; i ++) {
+        printf("%05d %d ", l2[i], Node[l2[i]].data);
+        if(i != n - 1)
+            printf("%05d\n", l2[i + 1]);
+        else
+            printf("-1\n");
+    }
+    return 0;
+}
