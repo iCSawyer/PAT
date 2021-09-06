@@ -1,0 +1,67 @@
+// 55min AC
+#include<bits/stdc++.h>
+using namespace std;
+
+const int N = 100010;
+struct node{
+    string data;
+    int lchild;
+    int rchild;
+}Node[N];
+int isRoot[N];
+vector<int> v;
+vector<string> ans;
+
+void post(int root) {
+    if(root == -1) return;
+    post(Node[root].lchild);
+    post(Node[root].rchild);
+    v.push_back(root);
+}
+
+int main() {
+    int n, root; cin >> n;
+    fill(isRoot, isRoot + N, 1);
+    for(int i = 1; i <= n; i ++) {
+        string a; int b, c;
+        cin >> a >> b >> c;
+        Node[i].data = a;
+        Node[i].lchild = b;
+        Node[i].rchild = c;
+        isRoot[b] = isRoot[c] = 0;
+    }
+    for(int i = 1; i <= n; i ++)
+        if(isRoot[i] == 1) {
+            root = i;
+            break;
+        }
+    post(root);
+    for(int i = 0; i < v.size(); i ++) cout << v[i];
+    cout << endl;
+    int p = 0; // p是地址
+    while(p < v.size()) {
+        // cout << "p:" << p << endl;
+        int ansp = ans.size() - 1;
+        int add = v[p];
+        if(Node[add].lchild == -1 && Node[add].rchild == -1) {
+            ans.push_back("(" + Node[add].data + ")");
+            p ++;
+        }
+        else if(Node[add].lchild != -1 && Node[add].rchild != -1) {
+            string s1 = ans[ansp - 1], s2 = ans[ansp];
+            ans.pop_back(); ans.pop_back();
+            ans.push_back("(" + s1.append(s2) + Node[add].data + ")");
+            p ++;
+        }
+        else if(Node[add].lchild == -1 && Node[add].rchild != -1) {
+            string s1 = Node[add].data;
+            string s2 = ans[ansp];
+            string s3 = "(" + s1.append(s2) + ")";
+            ans.pop_back(); ans.push_back(s3);
+            p ++;
+        }
+        // cout << "?";
+    }
+    cout << ans[0];
+    return 0;
+}

@@ -1,0 +1,50 @@
+// 20min AC
+#include<bits/stdc++.h>
+using namespace std;
+
+const int N = 100010;
+struct node{
+    int address;
+    int data;
+    int next;
+}Node[N];
+vector<int> v1, v2, ans;
+
+int main() {
+    int head1, head2, n;
+    scanf("%d%d%d", &head1, &head2, &n);
+    for(int i = 0; i < n; i ++) {
+        int a, b, c;
+        scanf("%d%d%d", &a, &b, &c);
+        Node[a] = {a, b, c};
+    }
+
+    int p = head1;
+    while(p != -1) {
+        v1.push_back(p);
+        p = Node[p].next;
+    }
+    p = head2;
+    while(p != -1) {
+        v2.push_back(p);
+        p = Node[p].next;
+    }
+    if(v1.size() < v2.size()) swap(v1, v2);
+
+    int p1 = 0, p2 = v2.size() - 1;
+    while(p1 < v1.size() && p2 >= 0) {
+        ans.push_back(v1[p1 ++]);
+        ans.push_back(v1[p1 ++]);
+        ans.push_back(v2[p2 --]);
+    }
+    while(p1 < v1.size()) {
+        ans.push_back(v1[p1 ++]);
+    }
+
+    for(int i = 0; i < ans.size(); i ++)
+        if(i != ans.size() - 1)
+            printf("%05d %d %05d\n", ans[i], Node[ans[i]].data, ans[i + 1]);
+        else
+            printf("%05d %d -1\n", ans[i], Node[ans[i]].data);
+    return 0;
+}

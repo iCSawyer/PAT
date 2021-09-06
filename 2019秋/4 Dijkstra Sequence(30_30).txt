@@ -1,0 +1,64 @@
+// 26min AC
+#include<bits/stdc++.h>
+using namespace std;
+
+const int N = 1010;
+const int INF = 1E9;
+int G[N][N];
+int n, point = 0;
+int vis[N], d[N], flag;
+vector<int> in;
+
+void Dij(int s) {
+    fill(d, d + N, INF);
+    fill(vis, vis + N, 0);
+    d[s] = 0;
+    for(int i = 1; i <= n; i ++) {
+        int u = -1, MIN = INF;
+        for(int j = 1; j <= n; j ++) {
+            if(!vis[j] && d[j] < MIN) {
+                u = j, MIN = d[j];
+            }
+        }
+
+        if(u == -1) return;
+        if(!vis[in[point]] && MIN == d[in[point]]) {
+            vis[in[point]] = 1;
+            u = in[point];
+            point ++;
+        }
+        else {
+            flag = 0; return;
+        }
+
+        for(int v = 1; v <= n; v ++) {
+            if(!vis[v] && G[u][v] != 0 && d[v] > d[u] + G[u][v]) {
+                d[v] = d[u] + G[u][v];
+            }
+        }
+    }
+}
+
+int main() {
+    int t, m; scanf("%d%d", &n, &t);
+    for(int i = 1; i <= t; i ++) {
+        int a, b, c;
+        scanf("%d%d%d", &a, &b, &c);
+        G[a][b] = G[b][a] = c;
+    }
+    scanf("%d", &t);
+    while(t --) {
+        in.clear();
+        point = 0; //指向正在处理的序列的位置
+        flag = 1;
+        for(int i = 0; i < n; i ++) {
+            scanf("%d", &m); in.push_back(m);
+        }
+        Dij(in[0]);
+        if(flag) cout << "Yes\n";
+        else cout << "No\n";
+    }
+
+    Dij(5);
+    return 0;
+}
