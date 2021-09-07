@@ -1,0 +1,112 @@
+// 30min AC
+#include<bits/stdc++.h>
+using namespace std;
+
+const int N = 1010, INF = 1e8;
+int G[N][N], happy[N];
+int d[N], vis[N], num[N];
+int n, head, seq = 0, minC = 1e9, maxH = -1;
+double maxAH = -1;
+vector<int> pre[N], temp, path;
+map<string, int> s2i;
+map<int, string> i2s;
+
+void print() {
+    printf("%d %d %d %d\n", num[path[0]], minC, maxH, (int)maxAH);
+    for(int i = path.size() - 1; i >= 0; i --)
+        printf("%s%s", i2s[path[i]].c_str(), i == 0 ? "\n" : "->");
+}
+
+int change(string s) {
+    int ans = 0;
+    if(s2i.find(s) == s2i.end()) {
+        s2i.insert(pair<string, int>(s, seq));
+        i2s.insert(pair<int, string>(seq, s));
+        ans = seq;
+        seq ++;
+    }
+    else
+        ans = s2i[s];
+    return ans;
+}
+
+void DFS(int st, int cur) {
+    if(cur == st) {
+        temp.push_back(cur);
+        int C = d[temp[0]];
+        int H = 0, AH = 0;
+        for(int i = 0; i < temp.size(); i ++)
+            H = H + happy[temp[i]];
+        AH = (double)H / (temp.size() - 1);
+        if(C < minC) {
+            minC = C, maxH = H, maxAH = AH;
+            path = temp;
+        }
+        else if(C == minC && H > maxH) {
+            maxH = H, maxAH = AH;
+            path = temp;
+        }
+        else if(C == minC && H == maxH && AH > maxAH) {
+            maxAH = AH;
+            path = temp;
+        }
+        temp.pop_back();
+        return;
+    }
+    temp.push_back(cur);
+    for(int i = 0; i < pre[cur].size();i ++)
+        DFS(st, pre[cur][i]);
+    temp.pop_back();
+}
+
+void Dij(int s) {
+    fill(d, d + N, INF);
+    d[s] = 0;
+    num[s] = 1;
+    for(int i = 0; i < n; i ++) {
+        int u = -1, MIN = INF;
+        for(int j = 0; j < n; j ++) {
+            if(!vis[j] && d[j] < MIN) {
+                u = j, MIN = d[j];
+            }
+        }
+        if(u == -1) return;
+        else vis[u] = -1;
+        for(int v = 0; v < n; v ++) {
+            if(!vis[v] && G[u][v] != 0) {
+                if(d[v] > d[u] + G[u][v]) {
+                    d[v] = d[u] + G[u][v];
+                    pre[v].clear();
+                    pre[v].push_back(u);
+                    num[v] = num[u];
+                } else if(d[v] == d[u] + G[u][v]) {
+                    pre[v].push_back(u);
+                    num[v] += num[u];
+                }
+            }
+        }
+    }
+}
+
+int main() {
+    int m; string s;
+    cin >> n >> m >> s;
+    head = change(s);
+    happy[head] = 0; //先设定为特殊值
+    for(int i = 0; i < n - 1; i ++) {
+        string s; int t;
+        cin >> s >> t;
+        happy[change(s)] = t;
+    }
+    for(int i = 0; i < m; i ++) {
+        string city1, city2;
+        int c1, c2, dis;
+        cin >> city1 >> city2 >> dis;
+        c1 = change(city1);
+        c2 = change(city2);
+        G[c1][c2] = G[c2][c1] = dis;
+    }
+    Dij(head);
+    DFS(head, change("ROM"));
+    print();
+}
