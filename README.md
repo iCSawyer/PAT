@@ -1,4 +1,4 @@
-# PAT
+# PAT (Advanced Level) Solutions
 ## **Reference**
 + 《算法笔记》胡凡等
 + [liuchuo's Blog](https://www.liuchuo.net/) & https://github.com/liuchuo/PAT
