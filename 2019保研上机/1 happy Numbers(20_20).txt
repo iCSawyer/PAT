@@ -1,0 +1,34 @@
+// 10min AC
+#include<bits/stdc++.h>
+using namespace std;
+
+unordered_set<int> num;
+
+int process(int n) {
+    int ans = 0;
+    vector<int> dig;
+    while(n != 0) {
+        dig.push_back(n % 10);
+        n = n / 10;
+    }
+    for(int i = 0; i < dig.size(); i ++)
+        ans += dig[i] * dig[i];
+    return ans;
+}
+
+int main() {
+    int m;
+    cin >> m;
+    for(int i = 0; i < m; i ++) {
+        int n, cnt = 0; cin >> n;
+        num.clear();
+        while(n != 1 && num.find(n) == num.end()) {
+            num.insert(n);
+            n = process(n);
+            cnt ++;
+        }
+        if(n == 1) printf("%d\n", cnt);
+        else printf("%d\n", n);
+    }
+    return 0;
+}

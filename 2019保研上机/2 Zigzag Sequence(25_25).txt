@@ -1,0 +1,38 @@
+// 20min AC
+#include<bits/stdc++.h>
+using namespace std;
+
+vector<int> a;
+
+int main() {
+    int n, width;
+    cin >> n >> width;
+    for(int i = 0; i < n; i ++) {
+        int t; scanf("%d", &t);
+        a.push_back(t);
+    }
+    sort(a.begin(), a.end());
+    for(int i = 0; i < n / width; i ++) {
+        for(int j = 0; j < width; j ++) {
+            if(i % 2 == 0) printf("%d", a[width * i + j]);
+            else printf("%d", a[width * (i + 1) - j - 1]);
+            if(j != width - 1) printf(" ");
+        }
+        printf("\n");
+    }
+    if((n / width) % 2 == 0) { // 正数
+        for(int i = (n - n % width); i < n; i ++) {
+            printf("%d", a[i]);
+            if(i != n - 1)
+                printf(" ");
+        }
+    }
+    else { // 正数
+        for(int i = n - 1 ; i >= (n - n % width); i --) {
+            printf("%d", a[i]);
+            if(i != (n - n % width))
+                printf(" ");
+        }
+    }
+    return 0;
+}
