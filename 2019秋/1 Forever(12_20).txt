@@ -1,0 +1,63 @@
+// 30min 18/20
+#include<bits/stdc++.h>
+using namespace std;
+
+const int N = 50;
+vector<string> letter[N]; // 0-25分别存储0-26
+vector<string> words;
+
+int change(char c) {
+    if(c >= 'a' && c <= 'z') return c - 'a';
+    if(c >= 'A' && c <= 'Z') return c - 'A';
+    else { cout << "change Error.\n"; return -1; }
+}
+
+void printWord(string s) { // s是一个单词
+    int len = s.size();
+    for(int i = 0; i < 7; i ++) {
+        for(int j = 0; j < len; j ++) {
+            char c = s[j];
+            printf("%s%s", letter[change(c)][i].c_str(), j == len - 1 ? "\n" : " ");
+        }
+    }
+}
+
+void selectWords(string &s) {
+    int i = 0, j = 0;
+
+    while(j <= s.size()) {
+        while(!(s[i] >= 'A' && s[i] <= 'Z') && !(s[i] >= 'a' && s[i] <= 'z')) {
+            i ++;
+            if(i >= s.size()) break;
+        }
+        j = i;
+        while((s[j] >= 'A' && s[j] <= 'Z') || (s[j] >= 'a' && s[j] <= 'z')) {
+            j ++;
+            if(j > s.size()) break;
+        }
+        if(i >= s.size() || j > s.size())
+            break;
+        words.push_back(s.substr(i, j - i));
+        i = j;
+    }
+//    for(auto item : words)
+//        cout << item << endl;
+}
+
+int main() {
+    string s;
+    for(int i = 0; i < 26; i ++) {
+        letter[i].resize(7);
+        for(int j = 0; j < 7; j ++) {
+            cin >> letter[i][j];
+        }
+    }
+    getchar();
+    getline(cin, s);
+    selectWords(s);
+    for(int i = 0; i < words.size(); i ++) {
+        printWord(words[i]);
+        if(i != words.size() - 1)
+            printf("\n");
+    }
+}
