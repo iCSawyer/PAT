@@ -1,0 +1,54 @@
+// 26min AC
+#include<bits/stdc++.h>
+using namespace std;
+
+const int N = 100010;
+bool p[N];
+int maxp, num;
+
+void prime() {
+    fill(p, p + maxp + 1, 1);
+    p[0] = p[1] = 0;
+    for(int i = 2; i * i <= maxp; i ++) {
+        for(int j = 2; j * i <= maxp; j ++)
+            p[i * j] = 0;
+    }
+}
+
+int main() {
+    int maxd, isans = 0;
+    cin >> num >> maxp;
+    prime();
+    if(num == 1) {
+        for(int i = maxp; i >= 0; i --)
+            if(p[i]) {
+                printf("%d", i);
+                return 0;
+            }
+    }
+    maxd = maxp / (num - 1); //最大公差
+    for(int i = maxd; i >= 1; i --) { //从大公差开始
+        for(int j = maxp; j >= 1; j --) { //从最后一个数开始
+            if(j - (num - 1) * i <= 0) continue; //如果公差太大
+            int flag = 1;
+            for(int k = 0; k < num; k ++)
+                if(!p[j - i * k]) {
+                    flag = 0;
+                    break;
+                }
+            if(flag == 1) {
+                isans = 1;
+                for(int k = num - 1; k >= 0; k --)
+                    printf("%d%s", j - i * k, k == 0 ? "" : " ");
+                return 0;
+            }
+        }
+    }
+
+    for(int i = maxp; i >= 0; i --)
+        if(p[i]) {
+            printf("%d", i);
+            return 0;
+        }
+    return 0;
+}
