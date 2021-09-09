@@ -1,0 +1,47 @@
+// 30min AC
+#include<bits/stdc++.h>
+using namespace std;
+
+const int N = 100010;
+int n, m; //朋友总人数，关系数，都是1-N
+vector<int> Adj[N], cc;
+unordered_set<int> circle;
+int friends[N];
+
+bool cmp(int a, int b) {
+    if(friends[a] == friends[b]) return a < b;
+    return friends[a] > friends[b];
+}
+
+int main() {
+    int t;
+    cin >> n >> m;
+    for(int i = 0; i < m; i ++) {
+        int a, b;
+        scanf("%d%d", &a, &b);
+        Adj[a].push_back(b);
+        Adj[b].push_back(a);
+    }
+    while(scanf("%d", &t) != EOF) {
+        if(t == 0) break;
+        fill(friends, friends + N, 0);
+        circle.clear(); cc.clear();
+        for(int i = 0; i < t; i ++) {
+            int f; scanf("%d",  &f);
+            circle.insert(f);
+            cc.push_back(f);
+        }
+        for(int i = 0;i < cc.size(); i ++) {
+            int num = 0, person = cc[i];
+            for(int j = 0; j < Adj[person].size(); j ++)
+                if(circle.find(Adj[person][j]) != circle.end())
+                    num ++;
+            friends[person] = num;
+        }
+        sort(cc.begin(), cc.end(), cmp);
+        for(int i = 0; i < 3; i ++)
+            printf("%d%s", cc[i], i == 2 ? "\n" : " ");
+    }
+
+    return 0;
+}

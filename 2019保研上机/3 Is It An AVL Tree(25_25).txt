@@ -1,0 +1,48 @@
+// 30min AC
+#include<bits/stdc++.h>
+using namespace std;
+
+const int N = 10010;
+struct node {
+    int key;
+    node* lchild;
+    node* rchild;
+    int height = 0;
+};
+int n, pre[N], flag;
+
+node* createTree(int left, int right) {
+    if(left > right) return NULL;
+    node* root = new node;
+    int key = pre[left]; root->key = key;
+    int pos;
+    for(pos = left + 1; pos <= right; pos ++)
+        if(pre[pos] > key) break;
+    root->lchild = createTree(left + 1, pos - 1);
+    root->rchild = createTree(pos, right);
+    return root;
+}
+
+int height(node* root) {
+    if(root == NULL) return 0;
+    int l = height(root->lchild);
+    int r = height(root->rchild);
+    root->height = l > r ? l + 1 : r + 1;
+    if(abs(l - r) > 1) flag = 0;
+    return root->height;
+}
+
+
+int main() {
+    int m; cin >> m;
+    while(m --) {
+        int t; cin >> n; flag = 1;
+        for(int i = 0; i < n; i ++) scanf("%d", &pre[i]);
+        node* root = NULL;
+        root = createTree(0, n - 1);
+        height(root);
+        if(flag) printf("Yes\n");
+        else printf("No\n");
+    }
+    return 0;
+}
