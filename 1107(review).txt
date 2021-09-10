@@ -1,0 +1,68 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+const int N = 10010;
+int n;
+int hobby[N];
+int father[N], isRoot[N];
+vector<int> s;
+
+int findFather(int x) {
+    int a = x;
+    while(x != father[x]) x = father[x];
+    while(a != father[a]) {
+        int z = a;
+        a = father[a];
+        father[z] = x;
+    }
+    return x;
+}
+
+void Union(int a, int b) {
+    int fa = findFather(a), fb = findFather(b);
+    if(fa == fb) return;
+    father[fb] = fa;
+}
+
+int main() {
+    int num = 0;
+    cin >> n;
+    for(int i = 1; i <= n; i ++) father[i] = i;
+    for(int i = 1; i <= n; i ++) {
+        // i号人的hobby
+        int t, flag = 0;
+        scanf("%d: ", &t);
+        for(int j = 0; j < t; j ++) {
+            int tt; scanf("%d", &tt);
+            if(hobby[tt] != 0) {
+                Union(hobby[tt], i);
+                flag = 1;
+            }
+            else {
+                hobby[tt] = i;
+            }
+        }
+    }
+
+    for(int i = 1; i <= n; i ++)
+        if(findFather(i) == i)
+            isRoot[i] = 1;
+
+    for(int i = 1; i <= n; i ++)
+        if(isRoot[i] >= 1)
+            num ++;
+        else
+            isRoot[findFather(i)] ++;
+
+    for(int i = 1; i <= n; i ++)
+        if(isRoot[i] >= 1)
+            s.push_back(isRoot[i]);
+
+    sort(s.begin(), s.end());
+    printf("%d\n", num);
+    for(int i = s.size() - 1; i >= 0; i --) {
+        cout << s[i];
+        if(i != 0) cout << " ";
+    }
+    return 0;
+}
