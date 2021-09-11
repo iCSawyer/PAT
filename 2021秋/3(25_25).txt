@@ -1,0 +1,50 @@
+// AC
+#include<bits/stdc++.h>
+using namespace std;
+
+const int N = 1010;
+int n; // 1-N
+int G[N][N];
+int bestStart, maxSpot = -1;
+int vis[N];
+vector<int> temp, path;
+
+void DFS(int start, int cur, int num) {
+    // cout << cur << " " << num << endl;
+    vis[cur] = 1;
+    temp.push_back(cur);
+    int i;
+    for(i = 1; i <= n; i ++) {
+        if(!vis[i] && G[cur][i] == 1) {
+            DFS(start, i, num + 1);
+            break;
+        }
+    }
+    if(i == n + 1) {
+        if(num > maxSpot) {
+            bestStart = start;
+            maxSpot = num;
+            path = temp;
+        }
+    }
+    vis[cur] = 0;
+    temp.pop_back();
+}
+
+int main() {
+    int m, a, b;
+    cin >> n >> m;
+    for(int i = 0; i < m; i ++) {
+        scanf("%d%d", &a, &b);
+        G[a][b] = G[b][a] = 1;
+    }
+    for(int i = 1; i <= n; i ++) {//从每个起点都试一下
+        fill(vis, vis + N, 0);
+        temp.clear();
+        DFS(i, i, 1);
+    }
+//    for(int i = 0; i < path.size(); i ++)
+//        cout << path[i] << " ";
+//    cout << endl;
+    cout << bestStart << " " <<  maxSpot;
+}

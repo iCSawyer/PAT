@@ -1,0 +1,49 @@
+// 38min 17/20
+#include<bits/stdc++.h>
+using namespace std;
+
+const int N = 10010;
+int n; //可用数组的数量
+struct node {
+    int address;
+    int length;
+    node(int _a, int _l):address(_a), length(_l) {};
+};
+int loc[N]; //记录第i个数组的位置
+vector<node> v;
+
+int main() {
+    int k, pos, num = 0, tmax = 0;
+    cin >> n >> k;
+    for(int i = 0; i < n; i ++) {
+        int t1, t2;
+        scanf("%d%d", &t1, &t2);
+        v.push_back(node(t1, t2));
+        num = num + t2;
+        loc[i] = num;
+    }
+//    for(int i = 0; i < n; i ++)
+//        cout << loc[i] << " ";
+
+
+    while(k --) {
+        scanf("%d", &pos);
+        int t, delta, ans;
+        for(t = 0; t < n; t ++) {
+            // cout << loc[t] << " " << pos << endl;
+            if(loc[t] > pos) break;
+        }
+        //cout << "t" << t << endl;
+        if(t == n) {
+            printf("Illegal Access\n");;
+            continue;
+        }
+        if(t + 1 > tmax) tmax = t + 1;
+        if(t == 0) delta = pos;
+        else delta = pos - loc[t - 1];
+        // cout << "delta" << delta << endl;
+        ans = delta * 4 + v[t].address;
+        printf("%d\n", ans);
+    }
+    printf("%d\n",tmax);
+}

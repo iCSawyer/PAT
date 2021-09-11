@@ -1,0 +1,82 @@
+// 30/30
+#include<bits/stdc++.h>
+using namespace std;
+
+struct node {
+    int key, priority;
+    node* lchild;
+    node* rchild;
+};
+
+int n;
+map<int, int> m; // 注意是priority, key
+queue<pair<int, int>> q;
+vector<int> ans1, ans2;
+map<int, bool> inq; //记录这个priority是否访问过了
+queue<pair<int, int>> fanwei;
+
+struct cmp {
+    bool operator () (pair<int, int> a, pair<int, int> b) {
+        return a.first < b.first;
+    }
+};
+
+int main() {
+    int k, p;
+    cin >> n;
+    for(int i = 0; i < n; i ++) {
+        scanf("%d%d", &k, &p);
+        m.insert(pair<int, int>(p, k));
+        inq.insert(pair<int, bool>(p, false));
+    }
+    q.push(*m.begin()); // 把第一个结点，priority
+    inq[ (*m.begin()).first ] = true;
+
+    fanwei.push(pair<int, int>( -1e9, 1e9 ));
+
+    while(!q.empty()) {
+        pair<int, int> temp = q.front(); q.pop();
+        pair<int, int> tfanwei = fanwei.front(); fanwei.pop();
+        int key = temp.second, priority = temp.first;
+        int minf = tfanwei.first, maxf = tfanwei.second;
+        ans1.push_back(key); ans2.push_back(priority);
+        // cout << "father:" << priority << " " << key << endl;
+        // cout << "min" << minf << " " << "max" << maxf << endl;
+        // 左儿子：key小于的里面，priority最小的
+        set<pair<int, int>, cmp> s;
+        for(auto i = m.begin(); i != m.end(); i ++)
+            if((*i).second < key && (*i).second < maxf && (*i).second > minf && !inq[(*i).first]) //还要没北方问过
+                s.insert(*i);
+        if(!s.empty()) {
+            q.push(*s.begin());
+            inq[(*s.begin()).first] = true;
+            fanwei.push(pair<int, int>( minf, key ));
+            //cout << "l:" << (*s.begin()).first << " " << (*s.begin()).second << endl;
+        }
+
+
+        // 右儿子：key大于里面，priority最小的
+        s.clear();
+        for(auto i = m.begin(); i != m.end(); i ++)
+            if((*i).second > key && (*i).second < maxf && (*i).second > minf && !inq[(*i).first])
+                s.insert(*i);
+        if(!s.empty()) {
+            q.push(*s.begin());
+            inq[(*s.begin()).first] = true;
+            fanwei.push(pair<int, int>( key, maxf ));
+
+            //cout << "r:" << (*s.begin()).first << " " << (*s.begin()).second << endl;
+        }
+    }
+    for(int i = 0; i < ans1.size(); i ++) {
+        cout << ans1[i];
+        if(i != ans1.size() - 1)
+            cout << " ";
+    }
+    cout << endl;
+    for(int i = 0; i < ans2.size(); i ++) {
+        cout << ans2[i];
+        if(i != ans2.size() - 1)
+            cout << " ";
+    }
+}

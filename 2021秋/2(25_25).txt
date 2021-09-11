@@ -1,0 +1,45 @@
+// AC
+#include<bits/stdc++.h>
+using namespace std;
+
+const int N = 100000010;
+int n, size[N], weight[N]; //重量为i的人所在的位置
+vector<int> in;
+stack<int> s;
+int w2i[N];
+
+int main() {
+    int t;
+    cin >> n;
+    for(int i = 0; i < n; i ++) {
+        scanf("%d", &t);
+        in.push_back(t);
+        s.push(t);
+    }
+    sort(in.begin(), in.end());
+//    for(int i = 0; i < n; i ++)
+//        cout << in[i];
+    for(int i = 0; i < n; i ++)
+        size[in[i]] = i;
+
+    in.clear();
+    for(int i = 0; i < n; i ++) {
+        scanf("%d", &t);
+        in.push_back(t);;
+        w2i[t] = i;
+    }
+    sort(in.begin(), in.end());
+    for(int i = 0; i < n; i ++)
+        weight[i] = in[i];
+
+
+    while(!s.empty()) {
+        int t = s.top(); s.pop();
+        int k = size[t]; //它的位置，如0，1
+        int m = weight[k];
+        int a = w2i[m];
+        cout << a+1;
+        if(s.size() != 0) cout << " ";
+    }
+
+}
