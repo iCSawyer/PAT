@@ -1,0 +1,73 @@
+// liuchuo的题解说明比较易懂，但是代码逻辑有点绕
+// 这里先选择了油价，再针对油价进行统一处理
+
+#include<cstdio>
+#include<iostream>
+#include<algorithm>
+
+using namespace std;
+
+const int N = 1000;
+double maxCapacity, disTotal, perRun;
+int n;
+struct station {
+    double price;
+    double distance;
+} Station[N];
+
+bool cmp(station a, station b) {
+    if (a.distance == b.distance) return a.price < b.price;
+    return a.distance < b.distance;
+}
+
+int main() {
+    cin >> maxCapacity >> disTotal >> perRun >> n;
+    for (int i = 0; i < n; i++)
+        scanf("%lf %lf", &Station[i].price, &Station[i].distance);
+    // 增设最后一个加油站，设置其价格为0
+    Station[n].price = 0, Station[n].distance = disTotal;
+    sort(Station, Station + n + 1, cmp);
+    // 特判
+    if (Station[0].distance != 0) {
+        printf("The maximum travel distance = 0.00");
+        return 0;
+    }
+    
+    // 状态
+    double money = 0, tank = 0; int curStation = 0;
+    while (curStation != n) {
+        double maxDis = maxCapacity * perRun;
+        double thisDis = Station[curStation].distance;
+        double thisPrice = Station[curStation].price;
+        int minS = -1;
+        double minP = 1e9;
+        for (int i = curStation + 1; i <= n; i++) {
+            // cout << i << " " << Station[i].price << endl;
+            if (Station[i].distance - thisDis > maxDis)
+                break;
+            if (Station[i].price < minP) {
+                minS = i;
+                minP = Station[i].price;
+                if (minP < thisPrice) // 如果小于当前价格，立刻前往
+                    break;
+            }
+        }
+        double minDis = Station[minS].distance;
+        double minPrice = Station[minS].price;
+
+        if (minS == -1) {
+            printf("The maximum travel distance = %.2f", thisDis + maxDis);
+            return 0;
+        } else if (minPrice < thisPrice) {
+            money += ((minDis - thisDis) / perRun - tank) * thisPrice;
+            tank = 0;
+            curStation = minS;
+        } else if (minPrice >= thisPrice) {
+            money += (maxCapacity - tank) * thisPrice;
+            tank = maxCapacity - ((Station[minS].distance - thisDis) / perRun);
+            curStation = minS;
+        }
+    }
+    printf("%.2f", money);
+    return 0;
+}
