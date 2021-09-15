@@ -1,0 +1,35 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+int m, n;
+vector<int> ans;
+int heap[1010];
+
+void post(int root) {
+    if(root < 1 || root > n) return;
+    post(root * 2);
+    post(root * 2 + 1);
+    ans.push_back(heap[root]);
+}
+
+int main() {
+    cin >> m >> n;
+    while(m --) {
+        fill(heap, heap + n + 1, 0);
+        int maxheap = 0, minheap = 0;
+        ans.clear();
+
+        for(int i = 1; i <= n; i ++) scanf("%d", &heap[i]);
+        for(int i = 1; i <= n / 2; i ++){
+            if(heap[i] > heap[i * 2]) maxheap = 1;
+            if(heap[i] < heap[i * 2]) minheap = 1;
+        }
+        if(maxheap == 1 && minheap == 0) printf("Max Heap\n");
+        else if(maxheap == 0 && minheap == 1) printf("Min Heap\n");
+        else printf("Not Heap\n");
+        post(1);
+        for(int i = 0; i < ans.size(); i ++)
+            printf("%d%s", ans[i], i == ans.size() - 1 ? "\n" : " ");
+    }
+    return 0;
+}
