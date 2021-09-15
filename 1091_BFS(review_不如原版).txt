@@ -1,0 +1,53 @@
+// 0:04
+#include<bits/stdc++.h>
+
+using namespace std;
+
+int m, n, l, t;
+bool brain[65][1300][130];
+struct node {
+    int k, x, y;
+    node(int kk, int ii, int jj): k(kk), x(ii), y(jj) {}
+};
+
+void BFS(int k, int i, int j, int &num) {
+    queue<node> q;
+    q.push(node(k, i, j));
+    while(!q.empty()) {
+        node t = q.front(); q.pop();
+        int k = t.k, x = t.x, y = t.y;
+        num ++; brain[k][x][y] = 0;
+
+        if(k + 1 < l && brain[k + 1][x][y] == 1) { q.push(node(k + 1, x, y));  brain[k + 1][x][y] = 0; }
+        if(k - 1 >= 0 && brain[k - 1][x][y] == 1) {q.push(node(k - 1, x, y)); brain[k - 1][x][y] = 0;}
+        if(x + 1 < m && brain[k][x + 1][y] == 1) {q.push(node(k, x + 1, y)); brain[k][x + 1][y] = 0;}
+        if(x - 1 >= 0 && brain[k][x - 1][y] == 1) {q.push(node(k, x - 1, y)); brain[k][x - 1][y] = 0;}
+        if(y + 1 < n && brain[k][x][y + 1] == 1) {q.push(node(k, x, y + 1)); brain[k][x][y + 1] = 0;}
+        if(y - 1 >= 0 && brain[k][x][y - 1] == 1) {q.push(node(k, x, y - 1)); brain[k][x][y - 1] = 0;}
+    }
+}
+
+int main() {
+    int ans = 0;
+    cin >> m >> n >> l >> t;
+    for (int k = 0; k < l; k++) {
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++)
+                scanf("%d", &brain[k][i][j]);
+        }
+    }
+    for (int k = 0; k < l; k++) {
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                int num = 0;
+                if (brain[k][i][j] == 1) {
+                    BFS(k, i, j, num);
+                }
+                if (num >= t)
+                    ans += num;
+            }
+        }
+    }
+    cout << ans;
+    return 0;
+}
