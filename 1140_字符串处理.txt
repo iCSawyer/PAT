@@ -1,0 +1,35 @@
+// 35min AC
+#include<bits/stdc++.h>
+using namespace std;
+
+vector<int> v1, v2;
+
+void print(vector<int> &v) {
+    for(int i = 0; i < v.size(); i ++)
+        cout << v[i];
+    cout << endl;
+}
+
+int main() {
+    int n, m;
+    cin >> n >> m;
+    v1.push_back(n);
+    m --;
+    while(m --) {
+        for(int i = 0; i < v1.size(); ) {
+            int j = i;
+            while(v1[j] == v1[i] && j < v1.size()) j ++;
+            int num = j - i;
+            // cout << "i" << i << "j" << j << endl;
+            v2.push_back(v1[i]);
+            v2.push_back(num);
+            i = j;
+            // print(v2);
+        }
+        // cout << "?:"; print(v2);
+        v1.clear();
+        swap(v1, v2);
+    }
+    print(v2);
+    return 0;
+}
