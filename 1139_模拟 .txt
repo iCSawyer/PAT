@@ -1,0 +1,66 @@
+// 9.18 - 9:53 24/30
+// 看答案修正 AC
+#include<bits/stdc++.h>
+using namespace std;
+
+const int N = 310;
+int n, pIndex = 0, G[N][N];
+vector<int> Adj[N];
+map<string, int> s2i;
+map<int, string> i2s;
+
+int change(string name) {
+    if(s2i.find(name) != s2i.end()) return s2i[name];
+    s2i.insert(pair<string, int>(name, pIndex));
+    i2s.insert(pair<int, string>(pIndex, name));
+    return pIndex ++;
+}
+
+bool cmp(int a, int b) {
+    string nameA = i2s[a], nameB = i2s[b];
+    if(nameA.size() == 5) nameA = nameA.substr(1, 4);
+    if(nameB.size() == 5) nameB = nameB.substr(1, 4);
+    return nameA < nameB;
+}
+
+int main() {
+    string a, b;
+    int m, aIndex, bIndex;
+    cin >> n >> m;
+    for(int i = 0; i < m; i ++) {
+        cin >> a >> b;
+        aIndex = change(a), bIndex = change(b);
+        Adj[aIndex].push_back(bIndex);
+        Adj[bIndex].push_back(aIndex);
+        G[aIndex][bIndex] = G[bIndex][aIndex] = 1;
+    }
+    for(int i = 0; i < pIndex; i ++)
+        sort(Adj[i].begin(), Adj[i].end(), cmp);
+
+    cin >> m;
+    while(m --) {
+        vector<pair<string, string>> ans;
+        int aFriend, bFriend;
+        cin >> a >> b;
+        aIndex = change(a), bIndex = change(b);
+        // 对a的朋友进行遍历
+        for(int i = 0; i < Adj[aIndex].size(); i ++) {
+            aFriend = Adj[aIndex][i];
+            if(i2s[aFriend].size() != a.size()) continue; // 如果是异性
+            for(int j = 0; j < Adj[bIndex].size(); j ++) {
+                bFriend = Adj[bIndex][j];
+                if(i2s[bFriend].size() != b.size()) continue; // 如果是异性
+                if(G[aFriend][bFriend] && bFriend != aIndex && aFriend != bIndex)
+                    ans.push_back(pair<string, string>(i2s[aFriend], i2s[bFriend]));
+            }
+        }
+        cout << ans.size() << endl;
+        for(int i = 0; i < ans.size(); i ++) {
+            string nameA = ans[i].first, nameB = ans[i].second;
+            if(nameA.size() == 5) nameA = nameA.substr(1, 4);
+            if(nameB.size() == 5) nameB = nameB.substr(1, 4);
+            cout << nameA << " " << nameB << endl;
+        }
+    }
+    return 0;
+}
