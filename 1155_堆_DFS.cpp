@@ -6,17 +6,6 @@ int n, heap[N], in[N];
 int seq = 0;
 vector<int> path;
 
-/*void leverOrder(int root) {
-    queue<int> q;
-    q.push(root);
-    while(!q.empty()) {
-        int t = q.front(); q.pop();
-        heap[t] = in[seq ++];
-        if(t * 2 <= n) q.push(t * 2);
-        if(t * 2 + 1 <= n) q.push(t * 2 + 1);
-    }
-}
-*/
 
 void preOrder(int root) {
     if(root * 2 > n) {
