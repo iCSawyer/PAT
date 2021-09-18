@@ -1,0 +1,82 @@
+//45min AC
+#include<bits/stdc++.h>
+
+using namespace std;
+
+const int N = 10100;
+int n, seq = 1;
+map<int, int> toName;
+map<int, int> toIndex;
+int score[N], father[N], isRoot[N], ans[N];
+
+int change(int name) {
+    if(toIndex.find(name) != toIndex.end()) return toIndex[name];
+    toIndex[name] = seq;
+    toName[seq] = name;
+    return seq ++;
+}
+
+int findFather(int x) {
+    int a = x;
+    while(x != father[x]) x = father[x];
+    while(a != father[a]) {
+        int z = a;
+        a = father[a];
+        father[z] = x;
+    }
+    return x;
+}
+
+void Union(int a, int b) {
+    int aFa = findFather(a);
+    int bFa = findFather(b);
+    if(aFa == bFa) return;
+    if(toName[aFa] < toName[bFa]) father[bFa] = aFa;
+    else father[aFa] = bFa;
+}
+
+bool cmp(int a, int b) {
+    if(isRoot[a] == 0 || isRoot[b] == 0) return isRoot[a] > isRoot[b];
+
+    if(score[a] == score[b] && isRoot[a] == isRoot[b]) return toName[a] < toName[b];
+    if(score[a] == score[b]) return isRoot[a] < isRoot[b];
+    else return score[a] > score[b];
+}
+
+int main() {
+    int t, m, k, rootNum = 0;
+    cin >> n;
+    //初始化并查集
+    for(int i = 1; i <= N; i ++) father[i] = i;
+
+    for(int i = 0; i < n; i ++) {
+        scanf("%d %d", &t, &m);
+        for(int i = 0; i < m; i ++) {
+            scanf("%d", &k);
+            Union(change(t), change(k)); // 都要转换成序号
+        }
+        scanf("%d", &k);
+        score[change(t)] = k;
+    }
+    // 注意从这里开始，人的序号从1到seq - 1
+    for(int i = 1; i < seq; i ++) {
+        isRoot[findFather(i)] ++;
+        if(findFather(i) == i) {
+            rootNum ++;
+        }
+        else {
+            score[father[i]] += score[i]; //把自己的分数加到爸爸身上
+            // score[i] = 0;
+        }
+        ans[i] = i; //结果序号
+    }
+    sort(ans + 1, ans + seq, cmp);
+
+    cout << rootNum << endl;
+    for(int i = 1; i <= rootNum; i ++) {
+        int p = ans[i];
+        printf("%04d %d %d\n", toName[p], isRoot[p], score[p]);
+    }
+
+    return 0;
+}

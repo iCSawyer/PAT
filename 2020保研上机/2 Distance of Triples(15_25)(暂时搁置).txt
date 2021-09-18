@@ -1,0 +1,37 @@
+// 25min AC
+// 15min 15/25
+
+#include<bits/stdc++.h>
+using namespace std;
+
+const int N = 10010;
+int n1, n2, n3;
+int a1[N], a2[N], a3[N];
+int ans1, ans2, ans3, Min = 1e9;
+
+int main() {
+    cin >> n1 >> n2 >> n3;
+    for(int i = 0; i < n1; i ++) scanf("%d", &a1[i]);
+    for(int i = 0; i < n2; i ++) scanf("%d", &a2[i]);
+    for(int i = 0; i < n3; i ++) scanf("%d", &a3[i]);
+    sort(a1, a1 + n1);
+    sort(a2, a2 + n2);
+    sort(a3, a3 + n3);
+
+    for(int i = 0; i < n1; i ++) {
+        for(int j = 0; j < n2; j ++) {
+            for(int k = 0; k < n3; k ++) {
+                int temp = 0;
+                temp += abs(a1[i] - a2[j]) + abs(a2[j] - a3[k]) +abs(a1[i] - a3[k]);
+                if(temp <= Min) {
+                    ans1 = a1[i];
+                    ans2 = a2[j];
+                    ans3 = a3[k];
+                    Min = temp;
+                }
+            }
+        }
+    }
+    printf("MinD(%d, %d, %d) = %d", ans1, ans2, ans3, Min);
+    return 0;
+}

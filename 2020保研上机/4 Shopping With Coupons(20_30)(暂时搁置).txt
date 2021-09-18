@@ -1,0 +1,27 @@
+// 20/30
+#include<bits/stdc++.h>
+using namespace std;
+
+int n,  dollar;
+int t, ans = 0;
+vector<int> test1, test2;
+
+int main() {
+    cin >> n >> dollar;
+    for(int i = 0; i < n; i ++) { cin >> t; test1.push_back(t); }
+    for(int i = 0; i < n; i ++) {
+        cin >> t;
+        for(int i = 0; i < test1.size(); i ++)
+            if(test1[i] - t <= dollar)
+            test2.push_back(test1[i] - t);
+    }
+    sort(test2.begin(), test2.end());
+    int k;
+    for(k = 0; k < test2.size(); k ++) {
+        if(dollar - test2[k] < 0) break;
+        dollar = dollar - test2[k];
+    }
+    cout << k << " " << dollar << endl;
+    return 0;
+
+}

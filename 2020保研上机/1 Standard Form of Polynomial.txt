@@ -1,0 +1,46 @@
+// 25min AC
+#include<bits/stdc++.h>
+using namespace std;
+
+const int N = 1000;
+vector<int> co;
+int n, ans;
+vector<int> path;
+map<int, bool> vis;
+
+void DFS(int depth, int k) {
+    if(k > depth) {
+        int temp = 1;
+        for(int i = 0; i < path.size(); i ++)
+            temp = temp * co[path[i] - 1];
+        ans = ans + temp;
+        return;
+    }
+    int start = path.size() == 0 ? 1 : path.back() + 1;
+    for(int i = start; i <= n; i ++) {
+        if(!vis[i]) {
+            path.push_back(i);
+            vis[i] = true;
+            DFS(depth, k + 1);
+            vis[i] = false;
+            path.pop_back();
+        }
+    }
+}
+
+
+int main() {
+    cin >> n;
+    co.resize(n);
+    for(int i = 0; i < n; i ++) { scanf("%d", &co[i]); co[i] *= -1; }
+
+    for(int i = 1; i <= n; i ++) {
+        ans = 0;
+        DFS(i, 1);
+        cout << ans;
+        if(i != n) cout << " ";
+    }
+
+
+    return 0;
+}
