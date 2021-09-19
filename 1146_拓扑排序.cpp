@@ -8,7 +8,8 @@ vector<int> inDegree, inDegree1;
 vector<int> Adj[N];
 
 bool check() {
-    for(int i = 0; i < n - 1; i ++) {
+    // 循环n次更直接
+    for(int i = 0; i < n; i ++) {
         int a = seq[i];
         if(inDegree[a] != 0) return false;
         for(int j = 0; j < Adj[a].size(); j ++) {

@@ -40,6 +40,7 @@ bool findNode(int u) {
     return false;
 }
 
+
 node* LCA(node* root, int a, int b) {
 //    思路分析：该题大致会出现四种情况：
 //    p，q节点均在左子树
